@@ -12,9 +12,11 @@ import {
   Wallet,
   Archive,
   Info,
+  Search,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NotificationBell } from "./NotificationBell";
+import { CommandSearch, useCommandSearch } from "./CommandSearch";
 
 const NAV_LINKS = [
   { href: "/dashboard",    label: "Dashboard",    Icon: LayoutDashboard },
@@ -28,6 +30,7 @@ export function Navbar() {
   const { user, isAuthenticated, login, logout } = useAuth();
   const [location] = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { open: searchOpen, setOpen: setSearchOpen } = useCommandSearch();
 
   useEffect(() => {
     setMobileOpen(false);
@@ -46,10 +49,12 @@ export function Navbar() {
     <>
       <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 font-serif text-lg font-bold text-primary">
+          <Link href="/" className="flex items-center gap-2 font-serif text-lg font-bold text-primary shrink-0">
             <CheckSquare className="h-5 w-5" />
-            <span>Life Admin Companion</span>
+            <span className="hidden sm:inline">Life Admin Companion</span>
+            <span className="sm:hidden">Life Admin</span>
           </Link>
 
           {/* Desktop nav */}
@@ -72,11 +77,25 @@ export function Navbar() {
           )}
 
           {/* Right side */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             {isAuthenticated ? (
               <>
+                {/* Search trigger — desktop shows hint text, mobile shows icon only */}
+                <button
+                  onClick={() => setSearchOpen(true)}
+                  className="flex items-center gap-2 h-9 rounded-md px-2.5 border border-border bg-muted/50 hover:bg-muted transition-colors text-muted-foreground"
+                  aria-label="Search items"
+                >
+                  <Search className="h-4 w-4 shrink-0" />
+                  <span className="hidden lg:inline text-sm">Search…</span>
+                  <span className="hidden lg:inline text-xs bg-background border border-border rounded px-1 py-0.5 font-mono leading-none">
+                    ⌘K
+                  </span>
+                </button>
+
                 <NotificationBell />
-                <div className="hidden md:flex items-center gap-2">
+
+                <div className="hidden md:flex items-center gap-1.5">
                   <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
                     {user?.firstName?.[0] || user?.email?.[0] || "U"}
                   </div>
@@ -112,16 +131,25 @@ export function Navbar() {
       {/* Mobile drawer */}
       {isAuthenticated && mobileOpen && (
         <>
-          {/* Backdrop */}
           <div
             className="fixed inset-0 z-40 bg-black/30 md:hidden"
             onClick={() => setMobileOpen(false)}
           />
-
-          {/* Panel */}
           <div className="fixed top-16 left-0 right-0 z-40 bg-background border-b border-border shadow-xl md:hidden animate-in slide-in-from-top-2 duration-200">
+
+            {/* Search row */}
+            <div className="px-4 pt-3 pb-2">
+              <button
+                onClick={() => { setMobileOpen(false); setSearchOpen(true); }}
+                className="w-full flex items-center gap-3 px-3 py-3 rounded-lg border border-border bg-muted/50 text-sm text-muted-foreground hover:bg-muted transition-colors"
+              >
+                <Search className="h-4 w-4 shrink-0" />
+                Search items…
+              </button>
+            </div>
+
             {/* Nav links */}
-            <nav className="px-4 py-3 space-y-1">
+            <nav className="px-4 py-2 space-y-0.5">
               {NAV_LINKS.map(({ href, label, Icon }) => (
                 <Link key={href} href={href}>
                   <div
@@ -138,7 +166,7 @@ export function Navbar() {
               ))}
             </nav>
 
-            {/* Divider + user row */}
+            {/* User row */}
             <div className="border-t border-border px-4 py-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
@@ -160,6 +188,11 @@ export function Navbar() {
             </div>
           </div>
         </>
+      )}
+
+      {/* Global command palette — always mounted when authenticated */}
+      {isAuthenticated && (
+        <CommandSearch open={searchOpen} onOpenChange={setSearchOpen} />
       )}
     </>
   );
