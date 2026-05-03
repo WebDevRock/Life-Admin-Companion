@@ -1,9 +1,12 @@
+import { useState } from "react";
 import { Link } from "wouter";
-import { useAuth } from "@workspace/replit-auth-web";
+import { useFirebaseAuth } from "@/lib/firebase-auth";
+import { AuthDialog } from "@/components/auth/AuthDialog";
 import { Shield } from "lucide-react";
 
 export default function Landing() {
-  const { isAuthenticated, login } = useAuth();
+  const { isAuthenticated } = useFirebaseAuth();
+  const [authOpen, setAuthOpen] = useState(false);
 
   return (
     <div
@@ -40,7 +43,6 @@ export default function Landing() {
         <circle cx="100" cy="100" r="100" />
       </svg>
 
-      {/* Hero */}
       <main className="relative z-10 flex-1 flex flex-col items-center justify-center text-center px-6 py-16 md:py-24 max-w-5xl mx-auto w-full">
         {/* Leaf motif */}
         <div className="mb-10 opacity-80" aria-hidden="true">
@@ -70,8 +72,7 @@ export default function Landing() {
         >
           Life Admin Companion helps you keep track of the boring but important
           things: bills, renewals, warranties, documents, appointments, and
-          deadlines. It is designed to reduce stress, avoid missed dates, and
-          give you one calm place for everyday admin.
+          deadlines. Designed to reduce stress and avoid missed dates.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
@@ -88,7 +89,7 @@ export default function Landing() {
           ) : (
             <>
               <button
-                onClick={() => login()}
+                onClick={() => setAuthOpen(true)}
                 className="w-full sm:w-auto px-8 py-4 rounded-full font-medium text-lg text-white shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
                 style={{ background: "#7c9e6e" }}
                 data-testid="btn-start-organising"
@@ -123,12 +124,13 @@ export default function Landing() {
           >
             <Shield className="w-5 h-5 shrink-0" />
             <span>
-              Your life admin records are private to your account. This app is
-              designed to help you stay organised, not to sell your data.
+              Your life admin records are private to your account — not sold, not shared.
             </span>
           </div>
         </div>
       </main>
+
+      <AuthDialog open={authOpen} onOpenChange={setAuthOpen} />
     </div>
   );
 }

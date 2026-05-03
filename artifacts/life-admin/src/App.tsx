@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { Switch, Route, Router as WouterRouter } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { useAuth } from "@workspace/replit-auth-web";
+import { useFirebaseAuth } from "@/lib/firebase-auth";
+import { AuthDialog } from "@/components/auth/AuthDialog";
 import NotFound from "@/pages/not-found";
 import { Navbar } from "@/components/layout/Navbar";
 
@@ -19,19 +21,31 @@ import AboutPage from "@/pages/about";
 const queryClient = new QueryClient();
 
 function ProtectedRoute({ component: Component, params }: { component: React.ComponentType<any>; params?: any }) {
-  const { isAuthenticated, isLoading, login } = useAuth();
+  const { isAuthenticated, isLoading } = useFirebaseAuth();
+  const [authOpen, setAuthOpen] = useState(false);
 
   if (isLoading) {
     return (
       <div className="min-h-[60dvh] flex items-center justify-center text-muted-foreground">
-        Loading...
+        Loading…
       </div>
     );
   }
 
   if (!isAuthenticated) {
-    login();
-    return null;
+    return (
+      <div className="min-h-[60dvh] flex flex-col items-center justify-center gap-4 text-muted-foreground">
+        <p className="text-sm">You need to be signed in to view this page.</p>
+        <button
+          onClick={() => setAuthOpen(true)}
+          className="px-6 py-2.5 rounded-full text-sm font-medium text-white"
+          style={{ background: "#7c9e6e" }}
+        >
+          Sign in
+        </button>
+        <AuthDialog open={authOpen} onOpenChange={setAuthOpen} />
+      </div>
+    );
   }
 
   return <Component params={params} />;

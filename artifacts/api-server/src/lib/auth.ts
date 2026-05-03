@@ -1,8 +1,9 @@
-import * as client from "openid-client";
+import * as admin from "firebase-admin";
 import crypto from "crypto";
 import { type Request, type Response } from "express";
 import { db, sessionsTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
+
 export interface AuthUser {
   id: string;
   email: string | null;
@@ -11,27 +12,33 @@ export interface AuthUser {
   profileImageUrl: string | null;
 }
 
-export const ISSUER_URL = process.env.ISSUER_URL ?? "https://replit.com/oidc";
 export const SESSION_COOKIE = "sid";
 export const SESSION_TTL = 7 * 24 * 60 * 60 * 1000;
 
 export interface SessionData {
   user: AuthUser;
-  access_token: string;
-  refresh_token?: string;
-  expires_at?: number;
 }
 
-let oidcConfig: client.Configuration | null = null;
+let _app: admin.app.App | null = null;
 
-export async function getOidcConfig(): Promise<client.Configuration> {
-  if (!oidcConfig) {
-    oidcConfig = await client.discovery(
-      new URL(ISSUER_URL),
-      process.env.REPL_ID!,
-    );
-  }
-  return oidcConfig;
+export function getFirebaseAdmin(): admin.app.App {
+  if (_app) return _app;
+
+  const raw = process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
+  if (!raw) throw new Error("FIREBASE_SERVICE_ACCOUNT_JSON is not set");
+
+  const serviceAccount = JSON.parse(raw) as admin.ServiceAccount;
+
+  _app = admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+  });
+
+  return _app;
+}
+
+export async function verifyFirebaseToken(idToken: string): Promise<admin.auth.DecodedIdToken> {
+  const app = getFirebaseAdmin();
+  return admin.auth(app).verifyIdToken(idToken);
 }
 
 export async function createSession(data: SessionData): Promise<string> {
@@ -58,27 +65,11 @@ export async function getSession(sid: string): Promise<SessionData | null> {
   return row.sess as unknown as SessionData;
 }
 
-export async function updateSession(
-  sid: string,
-  data: SessionData,
-): Promise<void> {
-  await db
-    .update(sessionsTable)
-    .set({
-      sess: data as unknown as Record<string, unknown>,
-      expire: new Date(Date.now() + SESSION_TTL),
-    })
-    .where(eq(sessionsTable.sid, sid));
-}
-
 export async function deleteSession(sid: string): Promise<void> {
   await db.delete(sessionsTable).where(eq(sessionsTable.sid, sid));
 }
 
-export async function clearSession(
-  res: Response,
-  sid?: string,
-): Promise<void> {
+export async function clearSession(res: Response, sid?: string): Promise<void> {
   if (sid) await deleteSession(sid);
   res.clearCookie(SESSION_COOKIE, { path: "/" });
 }

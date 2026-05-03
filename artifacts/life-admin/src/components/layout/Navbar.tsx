@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { useAuth } from "@workspace/replit-auth-web";
+import { useFirebaseAuth } from "@/lib/firebase-auth";
+import { AuthDialog } from "@/components/auth/AuthDialog";
 import {
   LogIn,
   LogOut,
@@ -27,9 +28,10 @@ const NAV_LINKS = [
 ];
 
 export function Navbar() {
-  const { user, isAuthenticated, login, logout } = useAuth();
+  const { user, isAuthenticated, logout } = useFirebaseAuth();
   const [location] = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [authOpen, setAuthOpen] = useState(false);
   const { open: searchOpen, setOpen: setSearchOpen } = useCommandSearch();
 
   useEffect(() => {
@@ -80,7 +82,6 @@ export function Navbar() {
           <div className="flex items-center gap-1.5">
             {isAuthenticated ? (
               <>
-                {/* Search trigger — desktop shows hint text, mobile shows icon only */}
                 <button
                   onClick={() => setSearchOpen(true)}
                   className="flex items-center gap-2 h-9 rounded-md px-2.5 border border-border bg-muted/50 hover:bg-muted transition-colors text-muted-foreground"
@@ -105,7 +106,6 @@ export function Navbar() {
                   </Button>
                 </div>
 
-                {/* Hamburger — mobile only */}
                 <button
                   className="md:hidden flex items-center justify-center h-9 w-9 rounded-md hover:bg-muted transition-colors"
                   onClick={() => setMobileOpen((v) => !v)}
@@ -119,7 +119,7 @@ export function Navbar() {
                 </button>
               </>
             ) : (
-              <Button onClick={() => login()} data-testid="btn-login">
+              <Button onClick={() => setAuthOpen(true)} data-testid="btn-login">
                 <LogIn className="h-4 w-4 mr-2" />
                 Log in
               </Button>
@@ -137,7 +137,6 @@ export function Navbar() {
           />
           <div className="fixed top-16 left-0 right-0 z-40 bg-background border-b border-border shadow-xl md:hidden animate-in slide-in-from-top-2 duration-200">
 
-            {/* Search row */}
             <div className="px-4 pt-3 pb-2">
               <button
                 onClick={() => { setMobileOpen(false); setSearchOpen(true); }}
@@ -148,7 +147,6 @@ export function Navbar() {
               </button>
             </div>
 
-            {/* Nav links */}
             <nav className="px-4 py-2 space-y-0.5">
               {NAV_LINKS.map(({ href, label, Icon }) => (
                 <Link key={href} href={href}>
@@ -166,7 +164,6 @@ export function Navbar() {
               ))}
             </nav>
 
-            {/* User row */}
             <div className="border-t border-border px-4 py-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
@@ -190,7 +187,10 @@ export function Navbar() {
         </>
       )}
 
-      {/* Global command palette — always mounted when authenticated */}
+      {/* Auth dialog */}
+      <AuthDialog open={authOpen} onOpenChange={setAuthOpen} />
+
+      {/* Global command palette */}
       {isAuthenticated && (
         <CommandSearch open={searchOpen} onOpenChange={setSearchOpen} />
       )}

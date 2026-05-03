@@ -1,10 +1,10 @@
 import { Shield, Lock, Heart } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useAuth } from "@workspace/replit-auth-web";
+import { useFirebaseAuth } from "@/lib/firebase-auth";
 import { Button } from "@/components/ui/button";
 
 export default function AboutPage() {
-  const { user, logout } = useAuth();
+  const { user, logout } = useFirebaseAuth();
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-3xl space-y-8">
@@ -59,7 +59,7 @@ export default function AboutPage() {
         </CardHeader>
         <CardContent className="text-sm text-muted-foreground space-y-3 leading-relaxed">
           <p>
-            Sign-in is handled securely. Your data is stored in a private database that is only accessible to you when you are signed in.
+            Sign-in is handled securely via Firebase Authentication. Your data is stored in a private database that is only accessible to you when you are signed in.
           </p>
         </CardContent>
       </Card>

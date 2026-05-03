@@ -24,7 +24,7 @@ import {
   ClipboardList,
 } from "lucide-react";
 import { format, isPast, isWithinInterval, addDays, parseISO } from "date-fns";
-import { useAuth } from "@workspace/replit-auth-web";
+import { useFirebaseAuth } from "@/lib/firebase-auth";
 
 function getUrgency(dueDate: string | null) {
   if (!dueDate) return "none";
@@ -69,7 +69,7 @@ function ItemRow({ item }: { item: any }) {
 }
 
 export default function Dashboard() {
-  const { user } = useAuth();
+  const { user } = useFirebaseAuth();
 
   const { data: summary, isLoading: summaryLoading } = useGetDashboardSummary({
     query: { queryKey: getGetDashboardSummaryQueryKey() },
