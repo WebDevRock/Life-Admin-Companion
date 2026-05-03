@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -29,7 +30,6 @@ import {
 import {
   Plus,
   Search,
-  AlertCircle,
   Clock,
   Archive,
   Trash2,
@@ -38,6 +38,9 @@ import {
   TriangleAlert,
   RefreshCw,
   Copy,
+  X,
+  CheckSquare,
+  Square,
 } from "lucide-react";
 import { format, isPast, isWithinInterval, addDays, parseISO } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
@@ -76,6 +79,9 @@ export default function ItemsPage() {
   const [category, setCategory] = useState("All");
   const [status, setStatus] = useState("All");
   const [dueSoon, setDueSoon] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+  const [bulkDeleting, setBulkDeleting] = useState(false);
+  const [bulkArchiving, setBulkArchiving] = useState(false);
 
   const params = {
     ...(search ? { search } : {}),
@@ -93,6 +99,31 @@ export default function ItemsPage() {
   const duplicateMutation = useCreateItem();
 
   const items = data?.items ?? [];
+  const allIds = items.map((i) => i.id);
+  const allSelected = allIds.length > 0 && allIds.every((id) => selectedIds.has(id));
+  const someSelected = selectedIds.size > 0;
+  const indeterminate = someSelected && !allSelected;
+
+  function toggleItem(id: number) {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  function toggleAll() {
+    if (allSelected) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(allIds));
+    }
+  }
+
+  function clearSelection() {
+    setSelectedIds(new Set());
+  }
 
   function handleArchive(id: number) {
     archiveMutation.mutate(
@@ -151,8 +182,42 @@ export default function ItemsPage() {
     );
   }
 
+  async function handleBulkArchive() {
+    setBulkArchiving(true);
+    const ids = Array.from(selectedIds);
+    try {
+      await Promise.all(
+        ids.map((id) =>
+          archiveMutation.mutateAsync({ id, data: { status: "archived" } })
+        )
+      );
+      queryClient.invalidateQueries({ queryKey: getListItemsQueryKey({}) });
+      toast({ title: `${ids.length} item${ids.length !== 1 ? "s" : ""} archived` });
+      setSelectedIds(new Set());
+    } catch {
+      toast({ title: "Some items could not be archived", variant: "destructive" });
+    } finally {
+      setBulkArchiving(false);
+    }
+  }
+
+  async function handleBulkDelete() {
+    setBulkDeleting(true);
+    const ids = Array.from(selectedIds);
+    try {
+      await Promise.all(ids.map((id) => deleteMutation.mutateAsync({ id })));
+      queryClient.invalidateQueries({ queryKey: getListItemsQueryKey({}) });
+      toast({ title: `${ids.length} item${ids.length !== 1 ? "s" : ""} deleted` });
+      setSelectedIds(new Set());
+    } catch {
+      toast({ title: "Some items could not be deleted", variant: "destructive" });
+    } finally {
+      setBulkDeleting(false);
+    }
+  }
+
   return (
-    <div className="container mx-auto px-4 py-8 max-w-5xl space-y-6">
+    <div className="container mx-auto px-4 py-8 max-w-5xl space-y-6 pb-32">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-serif font-bold text-foreground">Your items</h1>
@@ -237,13 +302,49 @@ export default function ItemsPage() {
         </div>
       ) : (
         <div className="space-y-3">
+          {/* Select-all row */}
+          <div className="flex items-center gap-3 px-1">
+            <button
+              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+              onClick={toggleAll}
+              aria-label={allSelected ? "Deselect all" : "Select all"}
+            >
+              {allSelected ? (
+                <CheckSquare className="h-4 w-4 text-primary" />
+              ) : indeterminate ? (
+                <CheckSquare className="h-4 w-4 text-primary/60" />
+              ) : (
+                <Square className="h-4 w-4" />
+              )}
+              <span>
+                {someSelected
+                  ? `${selectedIds.size} of ${items.length} selected`
+                  : `Select all ${items.length} items`}
+              </span>
+            </button>
+            {someSelected && (
+              <button
+                onClick={clearSelection}
+                className="ml-auto flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <X className="h-3 w-3" />
+                Clear
+              </button>
+            )}
+          </div>
+
           {items.map((item) => {
             const urgency = getItemStatus(item.dueDate ?? null);
+            const isSelected = selectedIds.has(item.id);
             return (
               <Card
                 key={item.id}
                 data-testid={`card-item-${item.id}`}
-                className={`transition-shadow hover:shadow-md ${
+                className={`transition-all hover:shadow-md ${
+                  isSelected
+                    ? "ring-2 ring-primary ring-offset-1"
+                    : ""
+                } ${
                   urgency === "overdue"
                     ? "border-l-4 border-l-destructive"
                     : urgency === "due-soon"
@@ -251,7 +352,17 @@ export default function ItemsPage() {
                     : ""
                 }`}
               >
-                <CardContent className="p-4 flex items-center justify-between gap-4">
+                <CardContent className="p-4 flex items-center gap-3">
+                  {/* Checkbox */}
+                  <Checkbox
+                    checked={isSelected}
+                    onCheckedChange={() => toggleItem(item.id)}
+                    aria-label={`Select ${item.title}`}
+                    className="shrink-0"
+                    data-testid={`checkbox-item-${item.id}`}
+                  />
+
+                  {/* Content */}
                   <div className="flex-1 min-w-0 space-y-1">
                     <div className="flex items-center gap-2 flex-wrap">
                       <h3 className="font-semibold text-foreground truncate">{item.title}</h3>
@@ -289,62 +400,139 @@ export default function ItemsPage() {
                       )}
                     </div>
                   </div>
-                  <div className="flex items-center gap-1 shrink-0">
-                    <Button variant="ghost" size="icon" asChild aria-label="View item">
+
+                  {/* Per-row actions — hidden while bulk-selecting to reduce clutter */}
+                  {!someSelected && (
+                    <div className="flex items-center gap-1 shrink-0">
+                      <Button variant="ghost" size="icon" asChild aria-label="View item">
+                        <Link href={`/items/${item.id}`}>
+                          <Eye className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                      <Button variant="ghost" size="icon" asChild aria-label="Edit item">
+                        <Link href={`/items/${item.id}/edit`}>
+                          <Pencil className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        aria-label="Duplicate item"
+                        onClick={() => handleDuplicate(item)}
+                        disabled={duplicateMutation.isPending}
+                        data-testid={`btn-duplicate-${item.id}`}
+                      >
+                        <Copy className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        aria-label="Archive item"
+                        onClick={() => handleArchive(item.id)}
+                        data-testid={`btn-archive-${item.id}`}
+                      >
+                        <Archive className="h-4 w-4" />
+                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="ghost" size="icon" aria-label="Delete item" data-testid={`btn-delete-${item.id}`}>
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Delete "{item.title}"?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This will permanently delete this item. Consider archiving it instead if you might need it later.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => handleDelete(item.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
+                  )}
+
+                  {/* In bulk-select mode, show a quick-nav link instead */}
+                  {someSelected && (
+                    <Button variant="ghost" size="icon" asChild aria-label="View item" className="shrink-0">
                       <Link href={`/items/${item.id}`}>
                         <Eye className="h-4 w-4" />
                       </Link>
                     </Button>
-                    <Button variant="ghost" size="icon" asChild aria-label="Edit item">
-                      <Link href={`/items/${item.id}/edit`}>
-                        <Pencil className="h-4 w-4" />
-                      </Link>
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      aria-label="Duplicate item"
-                      onClick={() => handleDuplicate(item)}
-                      disabled={duplicateMutation.isPending}
-                      data-testid={`btn-duplicate-${item.id}`}
-                    >
-                      <Copy className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      aria-label="Archive item"
-                      onClick={() => handleArchive(item.id)}
-                      data-testid={`btn-archive-${item.id}`}
-                    >
-                      <Archive className="h-4 w-4" />
-                    </Button>
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button variant="ghost" size="icon" aria-label="Delete item" data-testid={`btn-delete-${item.id}`}>
-                          <Trash2 className="h-4 w-4 text-destructive" />
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Delete "{item.title}"?</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            This will permanently delete this item. Consider archiving it instead if you might need it later.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction onClick={() => handleDelete(item.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                            Delete
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  </div>
+                  )}
                 </CardContent>
               </Card>
             );
           })}
+        </div>
+      )}
+
+      {/* Floating bulk action bar */}
+      {someSelected && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-5 py-3 rounded-2xl bg-background border border-border shadow-2xl shadow-black/20 animate-in slide-in-from-bottom-3 duration-200">
+          <span className="text-sm font-medium text-foreground tabular-nums whitespace-nowrap">
+            {selectedIds.size} selected
+          </span>
+
+          <div className="w-px h-5 bg-border" />
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleBulkArchive}
+            disabled={bulkArchiving || bulkDeleting}
+          >
+            <Archive className="h-4 w-4 mr-2" />
+            {bulkArchiving ? "Archiving…" : "Archive"}
+          </Button>
+
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-destructive border-destructive/20 hover:bg-destructive/10"
+                disabled={bulkDeleting || bulkArchiving}
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                {bulkDeleting ? "Deleting…" : "Delete"}
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>
+                  Delete {selectedIds.size} item{selectedIds.size !== 1 ? "s" : ""}?
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  This will permanently delete {selectedIds.size} item{selectedIds.size !== 1 ? "s" : ""}. This cannot be undone — consider archiving them instead.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleBulkDelete}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
+                  Delete {selectedIds.size} item{selectedIds.size !== 1 ? "s" : ""}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+
+          <div className="w-px h-5 bg-border" />
+
+          <button
+            onClick={clearSelection}
+            className="flex items-center justify-center h-7 w-7 rounded-full hover:bg-muted transition-colors text-muted-foreground"
+            aria-label="Clear selection"
+          >
+            <X className="h-4 w-4" />
+          </button>
         </div>
       )}
     </div>
