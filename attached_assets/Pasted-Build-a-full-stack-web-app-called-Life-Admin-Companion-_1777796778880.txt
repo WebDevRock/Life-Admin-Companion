@@ -1,0 +1,147 @@
+Build a full-stack web app called “Life Admin Companion”.
+
+Purpose:
+The app helps people manage everyday life admin in one private, calm dashboard. It should help users avoid missed renewals, forgotten bills, lost paperwork, late fees, and stressful last-minute admin.
+
+Target user:
+Ordinary households, families, carers, older adults, people on lower incomes, and anyone who struggles to keep track of life admin.
+
+Tone and design:
+The app should feel calm, simple, trustworthy, and non-judgemental. Avoid a corporate SaaS look. Use plain English. The design should be clean, accessible, responsive, and mobile-friendly.
+
+Tech requirements:
+- Use a modern full-stack web app approach suitable for Replit.
+- Use Replit Auth if available.
+- Use PostgreSQL for persistent storage.
+- Every user should only see their own data.
+- Build a working MVP first, not a huge unfinished product.
+- Include sensible seed/demo data if helpful.
+- Use secure server-side validation.
+- Do not store uploaded documents yet. For the MVP, allow users to store notes and links only.
+
+Core features:
+
+1. Authentication
+- Users can sign in.
+- Each user has their own private dashboard.
+- All records must belong to a user.
+
+2. Dashboard
+Create a dashboard that shows:
+- Items due in the next 7 days.
+- Items due in the next 30 days.
+- Overdue items.
+- Recently updated items.
+- Total active items.
+- A simple “Needs attention” section.
+
+3. Life admin items
+Users can create, view, edit, archive, and delete life admin items.
+
+Each item should include:
+- Title
+- Category
+- Provider or organisation name
+- Reference/account number, optional
+- Status: active, completed, renewed, cancelled, archived
+- Due date
+- Renewal date, optional
+- Reminder date, optional
+- Cost amount, optional
+- Cost frequency: one-off, weekly, monthly, quarterly, annually, unknown
+- Notes
+- Useful link
+- Priority: low, normal, high
+- Created date
+- Updated date
+
+4. Categories
+Add default categories:
+- Bills
+- Insurance
+- Vehicle
+- Home
+- Health
+- Family
+- Pets
+- Subscriptions
+- Documents
+- Warranties
+- Other
+
+Users should be able to filter by category.
+
+5. Item list page
+Create a list/table/card view of all active items with:
+- Search
+- Filter by category
+- Filter by status
+- Filter by due soon
+- Sort by due date
+- Clear visual indicators for overdue, due soon, and normal items.
+
+6. Add/edit item form
+Create a simple form with good labels and helper text.
+Make required fields obvious.
+Use date pickers for dates.
+Use dropdowns for category, status, cost frequency, and priority.
+
+7. Reminder logic
+For now, do not send emails or push notifications.
+Instead, show reminders inside the dashboard:
+- Overdue
+- Due this week
+- Due this month
+- Reminder date has passed
+- No due date set
+
+8. Archive
+Allow items to be archived instead of deleted.
+Archived items should be hidden from the main dashboard but available from an “Archived” view.
+
+9. User experience
+Include empty states such as:
+- “You have no upcoming deadlines.”
+- “Add your first life admin item.”
+- “Nothing overdue.”
+
+10. Privacy-first messaging
+Add a small privacy note on the dashboard:
+“Your life admin records are private to your account. This app is designed to help you stay organised, not to sell your data.”
+
+11. Database schema
+Create a suitable PostgreSQL schema with:
+- users table, or use the Replit Auth user table if appropriate
+- life_admin_items table
+- categories table if needed
+
+Make sure life_admin_items has a user_id column and queries are scoped by user_id.
+
+12. Pages needed
+- Landing page
+- Sign in page or auth flow
+- Dashboard
+- All items
+- Add item
+- Edit item
+- View item detail
+- Archived items
+- Basic settings/about page
+
+13. Landing page copy
+Use this rough positioning:
+
+“Life Admin Companion helps you keep track of the boring but important things: bills, renewals, warranties, documents, appointments, and deadlines. It is designed to reduce stress, avoid missed dates, and give you one calm place for everyday admin.”
+
+Primary button: “Start organising”
+Secondary button: “See example dashboard”
+
+14. Accessibility
+- Use readable font sizes.
+- Ensure sufficient colour contrast.
+- Do not rely only on colour to show overdue/due soon.
+- Make forms keyboard-friendly.
+- Use clear labels.
+
+15. Deliverable
+Build the app so I can run it in Replit, test the core features, and deploy it as a working MVP.
