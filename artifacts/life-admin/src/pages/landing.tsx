@@ -1,49 +1,134 @@
 import { Link } from "wouter";
 import { useAuth } from "@workspace/replit-auth-web";
-import { Button } from "@/components/ui/button";
 import { Shield } from "lucide-react";
 
 export default function Landing() {
   const { isAuthenticated, login } = useAuth();
 
   return (
-    <div className="container mx-auto px-4 py-16 md:py-24 max-w-4xl">
-      <div className="text-center space-y-8">
-        <div className="space-y-4">
-          <h1 className="text-4xl md:text-6xl font-serif font-bold text-foreground leading-tight">
-            One calm place for your everyday admin
-          </h1>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Life Admin Companion helps you keep track of the boring but important things: bills, renewals, warranties, documents, appointments, and deadlines. It is designed to reduce stress, avoid missed dates, and give you one calm place for everyday admin.
-          </p>
+    <div
+      className="min-h-[calc(100vh-4rem)] relative overflow-hidden flex flex-col"
+      style={{ background: "#f5f0e8", color: "#4a4641" }}
+    >
+      {/* Decorative background shapes */}
+      <svg
+        className="absolute top-0 right-0 pointer-events-none"
+        style={{
+          color: "rgba(124,158,110,0.10)",
+          width: "28rem",
+          height: "28rem",
+          transform: "translate(25%, -25%)",
+        }}
+        viewBox="0 0 200 200"
+        fill="currentColor"
+        aria-hidden="true"
+      >
+        <path d="M100 0C100 0 150 40 150 100C150 160 100 200 100 200C100 200 50 160 50 100C50 40 100 0 100 0Z" opacity="0.6" />
+      </svg>
+      <svg
+        className="absolute bottom-0 left-0 pointer-events-none"
+        style={{
+          color: "rgba(194,109,92,0.10)",
+          width: "32rem",
+          height: "32rem",
+          transform: "translate(-25%, 25%)",
+        }}
+        viewBox="0 0 200 200"
+        fill="currentColor"
+        aria-hidden="true"
+      >
+        <circle cx="100" cy="100" r="100" />
+      </svg>
+
+      {/* Hero */}
+      <main className="relative z-10 flex-1 flex flex-col items-center justify-center text-center px-6 py-16 md:py-24 max-w-5xl mx-auto w-full">
+        {/* Leaf motif */}
+        <div className="mb-10 opacity-80" aria-hidden="true">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M12 2C12 2 15.5 6 15.5 12C15.5 18 12 22 12 22C12 22 8.5 18 8.5 12C8.5 6 12 2 12 2Z"
+              fill="#7c9e6e"
+              fillOpacity="0.25"
+              stroke="#7c9e6e"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
         </div>
 
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8">
+        <h1
+          className="text-5xl md:text-6xl lg:text-7xl leading-tight mb-8 max-w-4xl font-medium tracking-tight"
+          style={{ fontFamily: "'Lora', Georgia, serif", color: "#2d4a27" }}
+        >
+          One calm place for your everyday admin
+        </h1>
+
+        <p
+          className="text-lg md:text-xl lg:text-2xl max-w-2xl mb-14 leading-relaxed font-light"
+          style={{ color: "#4a4641" }}
+        >
+          Life Admin Companion helps you keep track of the boring but important
+          things: bills, renewals, warranties, documents, appointments, and
+          deadlines. It is designed to reduce stress, avoid missed dates, and
+          give you one calm place for everyday admin.
+        </p>
+
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
           {isAuthenticated ? (
-            <Button asChild size="lg" className="w-full sm:w-auto text-lg" data-testid="btn-go-dashboard">
-              <Link href="/dashboard">Go to Dashboard</Link>
-            </Button>
+            <Link href="/dashboard">
+              <button
+                className="w-full sm:w-auto px-8 py-4 rounded-full font-medium text-lg text-white shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
+                style={{ background: "#7c9e6e" }}
+                data-testid="btn-go-dashboard"
+              >
+                Go to Dashboard
+              </button>
+            </Link>
           ) : (
             <>
-              <Button size="lg" onClick={() => login()} className="w-full sm:w-auto text-lg" data-testid="btn-start-organising">
+              <button
+                onClick={() => login()}
+                className="w-full sm:w-auto px-8 py-4 rounded-full font-medium text-lg text-white shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
+                style={{ background: "#7c9e6e" }}
+                data-testid="btn-start-organising"
+              >
                 Start organising
-              </Button>
-              <Button variant="outline" size="lg" asChild className="w-full sm:w-auto text-lg bg-card hover:bg-muted" data-testid="btn-example-dashboard">
-                <Link href="/dashboard">See example dashboard</Link>
-              </Button>
+              </button>
+              <Link href="/dashboard">
+                <button
+                  className="w-full sm:w-auto px-8 py-4 rounded-full font-medium text-lg transition-all duration-300 hover:-translate-y-0.5"
+                  style={{
+                    background: "transparent",
+                    color: "#2d4a27",
+                    border: "2px solid rgba(124,158,110,0.4)",
+                  }}
+                  data-testid="btn-example-dashboard"
+                >
+                  See example dashboard
+                </button>
+              </Link>
             </>
           )}
         </div>
 
-        <div className="pt-16">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border bg-muted text-foreground text-sm font-medium">
-            <Shield className="w-4 h-4" />
-            <p>
-              Your life admin records are private to your account. This app is designed to help you stay organised, not to sell your data.
-            </p>
+        <div className="mt-16">
+          <div
+            className="inline-flex items-center gap-3 px-6 py-3.5 rounded-full border text-sm md:text-base font-medium"
+            style={{
+              background: "rgba(124,158,110,0.12)",
+              borderColor: "rgba(124,158,110,0.25)",
+              color: "#2d4a27",
+            }}
+          >
+            <Shield className="w-5 h-5 shrink-0" />
+            <span>
+              Your life admin records are private to your account. This app is
+              designed to help you stay organised, not to sell your data.
+            </span>
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 }
