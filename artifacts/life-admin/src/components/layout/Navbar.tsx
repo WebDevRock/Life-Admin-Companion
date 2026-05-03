@@ -9,7 +9,7 @@ import {
   X,
   LayoutDashboard,
   List,
-  TrendingUp,
+  Wallet,
   Archive,
   Info,
 } from "lucide-react";
@@ -17,11 +17,11 @@ import { Button } from "@/components/ui/button";
 import { NotificationBell } from "./NotificationBell";
 
 const NAV_LINKS = [
-  { href: "/dashboard", label: "Dashboard", Icon: LayoutDashboard },
-  { href: "/items",     label: "Items",     Icon: List },
-  { href: "/costs",     label: "Costs",     Icon: TrendingUp },
-  { href: "/archived",  label: "Archived",  Icon: Archive },
-  { href: "/about",     label: "About",     Icon: Info },
+  { href: "/dashboard",    label: "Dashboard",    Icon: LayoutDashboard },
+  { href: "/items",        label: "Items",        Icon: List },
+  { href: "/money-check",  label: "Money Check",  Icon: Wallet },
+  { href: "/archived",     label: "Archived",     Icon: Archive },
+  { href: "/about",        label: "About",        Icon: Info },
 ];
 
 export function Navbar() {

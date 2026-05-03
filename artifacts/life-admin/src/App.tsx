@@ -13,6 +13,7 @@ import ItemDetailPage from "@/pages/item-detail";
 import ItemFormPage from "@/pages/item-form";
 import ArchivedPage from "@/pages/archived";
 import CostSummaryPage from "@/pages/cost-summary";
+import MoneyCheckPage from "@/pages/money-check";
 import AboutPage from "@/pages/about";
 
 const queryClient = new QueryClient();
@@ -63,6 +64,9 @@ function Router() {
           </Route>
           <Route path="/costs">
             {() => <ProtectedRoute component={CostSummaryPage} />}
+          </Route>
+          <Route path="/money-check">
+            {() => <ProtectedRoute component={MoneyCheckPage} />}
           </Route>
           <Route path="/about" component={AboutPage} />
           <Route component={NotFound} />
