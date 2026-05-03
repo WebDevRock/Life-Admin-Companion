@@ -36,7 +36,7 @@ export default function Landing() {
         </div>
 
         <div className="pt-16">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary/10 text-secondary-foreground text-sm font-medium">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border bg-muted text-foreground text-sm font-medium">
             <Shield className="w-4 h-4" />
             <p>
               Your life admin records are private to your account. This app is designed to help you stay organised, not to sell your data.
