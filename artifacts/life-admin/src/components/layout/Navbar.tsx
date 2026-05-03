@@ -1,7 +1,8 @@
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@workspace/replit-auth-web";
-import { LogIn, LogOut, CheckSquare, TrendingUp } from "lucide-react";
+import { LogIn, LogOut, CheckSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { NotificationBell } from "./NotificationBell";
 
 export function Navbar() {
   const { user, isAuthenticated, login, logout } = useAuth();
@@ -36,6 +37,7 @@ export function Navbar() {
                 </Link>
               </nav>
               <div className="flex items-center gap-2">
+                <NotificationBell />
                 <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
                   {user?.firstName?.[0] || user?.email?.[0] || "U"}
                 </div>

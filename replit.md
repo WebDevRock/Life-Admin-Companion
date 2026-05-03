@@ -83,6 +83,32 @@ The original item is kept in "renewed" status. The new item appears in the items
 
 The recurring section in the item form shows a toggle and — when enabled — a frequency picker. A "Repeats {frequency}" badge appears in the items list and detail view. The detail view also shows an explanatory card about the auto-create behaviour.
 
+## Notifications
+
+### In-app reminder bell
+A bell icon sits in the navbar (visible when logged in). It fetches your active items via React Query and filters client-side for any item whose `reminderDate` is today or in the past. A red badge shows the count. Clicking opens a dropdown listing each due item — tap any to go to its detail page.
+
+### Email reminders (requires SMTP setup)
+The API server runs a daily cron job at **08:00 UTC** that:
+1. Finds all active items with `reminderDate ≤ today`
+2. Groups them by user, skipping any user+item combinations already emailed today (tracked in `reminder_email_log` table)
+3. Looks up each user's email from `usersTable`
+4. Sends a styled HTML digest email via SMTP
+
+**To enable email reminders, set these environment secrets:**
+| Secret | Example |
+|---|---|
+| `SMTP_HOST` | `smtp.gmail.com` |
+| `SMTP_PORT` | `587` |
+| `SMTP_USER` | `you@gmail.com` |
+| `SMTP_PASS` | Gmail app password |
+| `FROM_EMAIL` | `you@gmail.com` |
+| `APP_URL` | Your deployed URL (for the "View your items →" button) |
+
+If none of these are set, the job logs a single info message on startup and does nothing — it won't crash.
+
+For Gmail: create an App Password at myaccount.google.com → Security → 2-Step Verification → App passwords.
+
 ## Notes
 
 - All queries are scoped by `user_id` — users only see their own data
