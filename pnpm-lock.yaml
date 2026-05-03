@@ -365,9 +365,6 @@ importers:
       '@workspace/api-client-react':
         specifier: workspace:*
         version: link:../../lib/api-client-react
-      '@workspace/replit-auth-web':
-        specifier: workspace:*
-        version: link:../../lib/replit-auth-web
       class-variance-authority:
         specifier: 'catalog:'
         version: 0.7.1
@@ -666,22 +663,6 @@ importers:
       drizzle-kit:
         specifier: ^0.31.9
         version: 0.31.9
-
-  lib/replit-auth-web:
-    dependencies:
-      '@workspace/api-client-react':
-        specifier: workspace:*
-        version: link:../api-client-react
-      firebase:
-        specifier: ^12.12.1
-        version: 12.12.1
-    devDependencies:
-      '@types/react':
-        specifier: 'catalog:'
-        version: 19.2.14
-      vite:
-        specifier: 'catalog:'
-        version: 7.3.2(@types/node@25.3.5)(jiti@2.6.1)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.4)
 
   scripts:
     devDependencies:

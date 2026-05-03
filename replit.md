@@ -13,7 +13,7 @@ A full-stack web app that helps people manage everyday life admin in one private
 - **Frontend**: React + Vite (artifact: `life-admin`, preview path: `/`)
 - **API framework**: Express 5 (artifact: `api-server`, preview path: `/api`)
 - **Database**: PostgreSQL + Drizzle ORM
-- **Auth**: Replit Auth (OpenID Connect with PKCE via `@workspace/replit-auth-web`)
+- **Auth**: Firebase Auth (email/password via Firebase JS SDK + Firebase Admin token verification)
 - **Validation**: Zod (`zod/v4`), `drizzle-zod`
 - **API codegen**: Orval (from OpenAPI spec in `lib/api-spec/openapi.yaml`)
 - **Build**: esbuild (CJS bundle)
@@ -22,11 +22,11 @@ A full-stack web app that helps people manage everyday life admin in one private
 
 ## Database Schema
 
-### `sessions` (auth, managed by replit-auth)
-Session storage for Replit Auth.
+### `sessions`
+Server-side session storage. Each row holds a session id, JSON payload (user data), and expiry timestamp.
 
-### `users` (auth, managed by replit-auth)
-Stores user profiles from Replit OIDC (id, email, firstName, lastName, profileImageUrl).
+### `users`
+Stores user profiles synced from Firebase on first login (id = Firebase UID, email, firstName, lastName, profileImageUrl).
 
 ### `life_admin_items`
 Core table. Every row is scoped by `user_id`.
@@ -63,11 +63,13 @@ Core table. Every row is scoped by `user_id`.
 - `lib/db/src/schema/lifeAdminItems.ts` — Life admin items schema
 - `artifacts/api-server/src/routes/items.ts` — Items CRUD routes
 - `artifacts/api-server/src/routes/dashboard.ts` — Dashboard summary routes
-- `artifacts/api-server/src/routes/auth.ts` — Replit Auth routes
-- `artifacts/api-server/src/lib/auth.ts` — OIDC config and session management
-- `artifacts/api-server/src/middlewares/authMiddleware.ts` — Auth middleware
+- `artifacts/api-server/src/routes/auth.ts` — Firebase auth routes (POST /api/auth/session, POST /api/auth/logout)
+- `artifacts/api-server/src/lib/auth.ts` — Firebase Admin token verification and session management
+- `artifacts/api-server/src/middlewares/authMiddleware.ts` — Auth middleware (reads session cookie)
 - `artifacts/life-admin/src/App.tsx` — Router with protected routes
-- `lib/replit-auth-web/` — Browser auth hook (`useAuth`)
+- `artifacts/life-admin/src/lib/auth-context.tsx` — AuthProvider + useAuth (single Firebase listener)
+- `artifacts/life-admin/src/lib/firebase-auth.ts` — useFirebaseAuth hook (used only inside AuthProvider)
+- `artifacts/life-admin/src/components/auth/AuthDialog.tsx` — Login / register / password-reset dialog
 
 ## Recurring Items
 
