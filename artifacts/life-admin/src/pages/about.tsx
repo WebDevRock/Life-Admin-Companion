@@ -1,10 +1,10 @@
 import { Shield, Lock, Heart } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useFirebaseAuth } from "@/lib/firebase-auth";
+import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
 
 export default function AboutPage() {
-  const { user, logout } = useFirebaseAuth();
+  const { user, logout } = useAuth();
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-3xl space-y-8">

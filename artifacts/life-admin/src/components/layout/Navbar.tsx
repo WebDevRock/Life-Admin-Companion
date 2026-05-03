@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { useFirebaseAuth } from "@/lib/firebase-auth";
+import { useAuth } from "@/lib/auth-context";
 import { AuthDialog } from "@/components/auth/AuthDialog";
 import {
   LogIn,
@@ -28,7 +28,7 @@ const NAV_LINKS = [
 ];
 
 export function Navbar() {
-  const { user, isAuthenticated, logout } = useFirebaseAuth();
+  const { user, isAuthenticated, logout } = useAuth();
   const [location] = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
@@ -188,7 +188,7 @@ export function Navbar() {
       )}
 
       {/* Auth dialog */}
-      <AuthDialog open={authOpen} onOpenChange={setAuthOpen} />
+      <AuthDialog open={authOpen} onOpenChange={setAuthOpen} redirectTo="/dashboard" />
 
       {/* Global command palette */}
       {isAuthenticated && (

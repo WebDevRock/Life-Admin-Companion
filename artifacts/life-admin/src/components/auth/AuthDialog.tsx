@@ -1,11 +1,11 @@
 import { useState } from "react";
+import { useLocation } from "wouter";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useFirebaseAuth } from "@/lib/firebase-auth";
-import { getAuth } from "firebase/auth";
-import { sendPasswordResetEmail } from "firebase/auth";
+import { useAuth } from "@/lib/auth-context";
+import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 import { initializeApp, getApps } from "firebase/app";
 
 type Mode = "login" | "register" | "reset";
@@ -14,16 +14,18 @@ interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   defaultMode?: "login" | "register";
+  redirectTo?: string;
 }
 
-export function AuthDialog({ open, onOpenChange, defaultMode = "login" }: Props) {
+export function AuthDialog({ open, onOpenChange, defaultMode = "login", redirectTo }: Props) {
   const [mode, setMode] = useState<Mode>(defaultMode);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [resetSent, setResetSent] = useState(false);
   const [resetError, setResetError] = useState<string | null>(null);
-  const { login, register, authError, clearAuthError } = useFirebaseAuth();
+  const { login, register, authError, clearAuthError } = useAuth();
+  const [, setLocation] = useLocation();
 
   function switchMode(next: Mode) {
     setMode(next);
@@ -41,9 +43,11 @@ export function AuthDialog({ open, onOpenChange, defaultMode = "login" }: Props)
       if (mode === "login") {
         await login(email, password);
         onOpenChange(false);
+        if (redirectTo) setLocation(redirectTo);
       } else if (mode === "register") {
         await register(email, password);
         onOpenChange(false);
+        if (redirectTo) setLocation(redirectTo);
       } else {
         setResetError(null);
         try {

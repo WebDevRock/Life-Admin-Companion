@@ -1,4 +1,6 @@
-import * as admin from "firebase-admin";
+import { initializeApp, cert, getApps, type App } from "firebase-admin/app";
+import { getAuth } from "firebase-admin/auth";
+import type { DecodedIdToken } from "firebase-admin/auth";
 import crypto from "crypto";
 import { type Request, type Response } from "express";
 import { db, sessionsTable } from "@workspace/db";
@@ -19,26 +21,28 @@ export interface SessionData {
   user: AuthUser;
 }
 
-let _app: admin.app.App | null = null;
+let _app: App | null = null;
 
-export function getFirebaseAdmin(): admin.app.App {
+export function getFirebaseAdmin(): App {
   if (_app) return _app;
 
   const raw = process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
   if (!raw) throw new Error("FIREBASE_SERVICE_ACCOUNT_JSON is not set");
 
-  const serviceAccount = JSON.parse(raw) as admin.ServiceAccount;
+  const serviceAccount = JSON.parse(raw);
 
-  _app = admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-  });
+  if (getApps().length > 0) {
+    _app = getApps()[0]!;
+  } else {
+    _app = initializeApp({ credential: cert(serviceAccount) });
+  }
 
   return _app;
 }
 
-export async function verifyFirebaseToken(idToken: string): Promise<admin.auth.DecodedIdToken> {
+export async function verifyFirebaseToken(idToken: string): Promise<DecodedIdToken> {
   const app = getFirebaseAdmin();
-  return admin.auth(app).verifyIdToken(idToken);
+  return getAuth(app).verifyIdToken(idToken);
 }
 
 export async function createSession(data: SessionData): Promise<string> {

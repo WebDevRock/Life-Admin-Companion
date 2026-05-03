@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Link } from "wouter";
-import { useFirebaseAuth } from "@/lib/firebase-auth";
+import { useAuth } from "@/lib/auth-context";
 import { AuthDialog } from "@/components/auth/AuthDialog";
 import { Shield } from "lucide-react";
 
 export default function Landing() {
-  const { isAuthenticated } = useFirebaseAuth();
+  const { isAuthenticated } = useAuth();
   const [authOpen, setAuthOpen] = useState(false);
 
   return (

@@ -3,7 +3,7 @@ import { Switch, Route, Router as WouterRouter } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { useFirebaseAuth } from "@/lib/firebase-auth";
+import { AuthProvider, useAuth } from "@/lib/auth-context";
 import { AuthDialog } from "@/components/auth/AuthDialog";
 import NotFound from "@/pages/not-found";
 import { Navbar } from "@/components/layout/Navbar";
@@ -21,7 +21,7 @@ import AboutPage from "@/pages/about";
 const queryClient = new QueryClient();
 
 function ProtectedRoute({ component: Component, params }: { component: React.ComponentType<any>; params?: any }) {
-  const { isAuthenticated, isLoading } = useFirebaseAuth();
+  const { isAuthenticated, isLoading } = useAuth();
   const [authOpen, setAuthOpen] = useState(false);
 
   if (isLoading) {
@@ -95,7 +95,9 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-          <Router />
+          <AuthProvider>
+            <Router />
+          </AuthProvider>
         </WouterRouter>
         <Toaster />
       </TooltipProvider>
