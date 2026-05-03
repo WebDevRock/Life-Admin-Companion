@@ -6,6 +6,7 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signOut,
+  sendPasswordResetEmail,
   type User as FirebaseUser,
 } from "firebase/auth";
 import type { AuthUser } from "@workspace/api-client-react";
