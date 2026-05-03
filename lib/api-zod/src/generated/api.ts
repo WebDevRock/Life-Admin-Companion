@@ -136,6 +136,16 @@ export const ListItemsResponse = zod.object({
       notes: zod.string().nullish(),
       usefulLink: zod.string().nullish(),
       priority: zod.enum(["low", "normal", "high"]),
+      isRecurring: zod.boolean(),
+      recurrenceFrequency: zod
+        .union([
+          zod.literal("weekly"),
+          zod.literal("monthly"),
+          zod.literal("quarterly"),
+          zod.literal("annually"),
+          zod.literal(null),
+        ])
+        .nullish(),
       createdAt: zod.coerce.date(),
       updatedAt: zod.coerce.date(),
     }),
@@ -167,6 +177,16 @@ export const CreateItemBody = zod.object({
   notes: zod.string().nullish(),
   usefulLink: zod.string().nullish(),
   priority: zod.enum(["low", "normal", "high"]),
+  isRecurring: zod.boolean().optional(),
+  recurrenceFrequency: zod
+    .union([
+      zod.literal("weekly"),
+      zod.literal("monthly"),
+      zod.literal("quarterly"),
+      zod.literal("annually"),
+      zod.literal(null),
+    ])
+    .nullish(),
 });
 
 /**
@@ -199,6 +219,16 @@ export const GetItemResponse = zod.object({
   notes: zod.string().nullish(),
   usefulLink: zod.string().nullish(),
   priority: zod.enum(["low", "normal", "high"]),
+  isRecurring: zod.boolean(),
+  recurrenceFrequency: zod
+    .union([
+      zod.literal("weekly"),
+      zod.literal("monthly"),
+      zod.literal("quarterly"),
+      zod.literal("annually"),
+      zod.literal(null),
+    ])
+    .nullish(),
   createdAt: zod.coerce.date(),
   updatedAt: zod.coerce.date(),
 });
@@ -228,6 +258,16 @@ export const UpdateItemBody = zod.object({
   notes: zod.string().nullish(),
   usefulLink: zod.string().nullish(),
   priority: zod.enum(["low", "normal", "high"]).optional(),
+  isRecurring: zod.boolean().optional(),
+  recurrenceFrequency: zod
+    .union([
+      zod.literal("weekly"),
+      zod.literal("monthly"),
+      zod.literal("quarterly"),
+      zod.literal("annually"),
+      zod.literal(null),
+    ])
+    .nullish(),
 });
 
 export const UpdateItemResponse = zod.object({
@@ -253,6 +293,16 @@ export const UpdateItemResponse = zod.object({
   notes: zod.string().nullish(),
   usefulLink: zod.string().nullish(),
   priority: zod.enum(["low", "normal", "high"]),
+  isRecurring: zod.boolean(),
+  recurrenceFrequency: zod
+    .union([
+      zod.literal("weekly"),
+      zod.literal("monthly"),
+      zod.literal("quarterly"),
+      zod.literal("annually"),
+      zod.literal(null),
+    ])
+    .nullish(),
   createdAt: zod.coerce.date(),
   updatedAt: zod.coerce.date(),
 });
@@ -314,6 +364,16 @@ export const GetDashboardSummaryResponse = zod.object({
       notes: zod.string().nullish(),
       usefulLink: zod.string().nullish(),
       priority: zod.enum(["low", "normal", "high"]),
+      isRecurring: zod.boolean(),
+      recurrenceFrequency: zod
+        .union([
+          zod.literal("weekly"),
+          zod.literal("monthly"),
+          zod.literal("quarterly"),
+          zod.literal("annually"),
+          zod.literal(null),
+        ])
+        .nullish(),
       createdAt: zod.coerce.date(),
       updatedAt: zod.coerce.date(),
     }),
@@ -354,6 +414,16 @@ export const GetUpcomingItemsResponse = zod.object({
       notes: zod.string().nullish(),
       usefulLink: zod.string().nullish(),
       priority: zod.enum(["low", "normal", "high"]),
+      isRecurring: zod.boolean(),
+      recurrenceFrequency: zod
+        .union([
+          zod.literal("weekly"),
+          zod.literal("monthly"),
+          zod.literal("quarterly"),
+          zod.literal("annually"),
+          zod.literal(null),
+        ])
+        .nullish(),
       createdAt: zod.coerce.date(),
       updatedAt: zod.coerce.date(),
     }),
@@ -394,6 +464,16 @@ export const GetRecentlyUpdatedItemsResponse = zod.object({
       notes: zod.string().nullish(),
       usefulLink: zod.string().nullish(),
       priority: zod.enum(["low", "normal", "high"]),
+      isRecurring: zod.boolean(),
+      recurrenceFrequency: zod
+        .union([
+          zod.literal("weekly"),
+          zod.literal("monthly"),
+          zod.literal("quarterly"),
+          zod.literal("annually"),
+          zod.literal(null),
+        ])
+        .nullish(),
       createdAt: zod.coerce.date(),
       updatedAt: zod.coerce.date(),
     }),

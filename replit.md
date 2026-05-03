@@ -69,9 +69,24 @@ Core table. Every row is scoped by `user_id`.
 - `artifacts/life-admin/src/App.tsx` — Router with protected routes
 - `lib/replit-auth-web/` — Browser auth hook (`useAuth`)
 
+## Recurring Items
+
+Items can be set as recurring with a frequency of weekly, monthly, quarterly, or annually.
+
+When a recurring item's status is set to **"renewed"** via the PUT `/api/items/:id` endpoint, the server automatically creates a new active item with:
+- All the same fields (title, category, provider, cost, notes, etc.)
+- Due date, renewal date, and reminder date all advanced by the recurrence interval
+- Status set to "active"
+- `isRecurring: true` and the same `recurrenceFrequency`
+
+The original item is kept in "renewed" status. The new item appears in the items list and dashboard immediately.
+
+The recurring section in the item form shows a toggle and — when enabled — a frequency picker. A "Repeats {frequency}" badge appears in the items list and detail view. The detail view also shows an explanatory card about the auto-create behaviour.
+
 ## Notes
 
 - All queries are scoped by `user_id` — users only see their own data
 - Items can be archived (status = "archived") instead of deleted
 - No email/push notifications — reminders are shown inside the dashboard
 - Notes and links are stored as text; no file uploads in MVP
+- Recurring item auto-creation happens server-side in the PUT route — no client-side logic needed

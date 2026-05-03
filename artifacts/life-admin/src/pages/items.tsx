@@ -36,6 +36,7 @@ import {
   Pencil,
   Eye,
   TriangleAlert,
+  RefreshCw,
 } from "lucide-react";
 import { format, isPast, isWithinInterval, addDays, parseISO } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
@@ -235,6 +236,12 @@ export default function ItemsPage() {
                       <Badge variant="secondary" className="text-xs capitalize">{item.status}</Badge>
                       {item.priority === "high" && (
                         <Badge className="text-xs">High priority</Badge>
+                      )}
+                      {item.isRecurring && item.recurrenceFrequency && (
+                        <span className="inline-flex items-center gap-1 text-xs font-medium text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+                          <RefreshCw className="h-3 w-3" aria-hidden />
+                          {item.recurrenceFrequency}
+                        </span>
                       )}
                     </div>
                     <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap">

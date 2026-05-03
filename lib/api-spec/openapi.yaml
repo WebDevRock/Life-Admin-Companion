@@ -513,6 +513,7 @@ components:
         - status
         - priority
         - costFrequency
+        - isRecurring
         - createdAt
         - updatedAt
       properties:
@@ -552,6 +553,11 @@ components:
         priority:
           type: string
           enum: [low, normal, high]
+        isRecurring:
+          type: boolean
+        recurrenceFrequency:
+          type: [string, 'null']
+          enum: [weekly, monthly, quarterly, annually, null]
         createdAt:
           type: string
           format: date-time
@@ -596,6 +602,11 @@ components:
         priority:
           type: string
           enum: [low, normal, high]
+        isRecurring:
+          type: boolean
+        recurrenceFrequency:
+          type: [string, 'null']
+          enum: [weekly, monthly, quarterly, annually, null]
 
     UpdateItemBody:
       type: object
@@ -633,6 +644,11 @@ components:
         priority:
           type: string
           enum: [low, normal, high]
+        isRecurring:
+          type: boolean
+        recurrenceFrequency:
+          type: [string, 'null']
+          enum: [weekly, monthly, quarterly, annually, null]
 
     DashboardSummary:
       type: object

@@ -22,6 +22,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import {
   Select,
   SelectContent,
@@ -29,7 +30,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2, RefreshCw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const CATEGORIES = [
@@ -60,6 +61,8 @@ const formSchema = z.object({
   notes: z.string().optional().nullable(),
   usefulLink: z.string().optional().nullable(),
   priority: z.enum(["low", "normal", "high"]),
+  isRecurring: z.boolean(),
+  recurrenceFrequency: z.enum(["weekly", "monthly", "quarterly", "annually"]).optional().nullable(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -102,6 +105,8 @@ export default function ItemFormPage({
       notes: "",
       usefulLink: "",
       priority: "normal",
+      isRecurring: false,
+      recurrenceFrequency: null,
     },
   });
 
@@ -121,6 +126,8 @@ export default function ItemFormPage({
         notes: existingItem.notes ?? "",
         usefulLink: existingItem.usefulLink ?? "",
         priority: existingItem.priority as any,
+        isRecurring: existingItem.isRecurring ?? false,
+        recurrenceFrequency: (existingItem.recurrenceFrequency as any) ?? null,
       });
     }
   }, [existingItem, mode, form]);
@@ -140,6 +147,8 @@ export default function ItemFormPage({
       notes: values.notes || null,
       usefulLink: values.usefulLink || null,
       priority: values.priority,
+      isRecurring: values.isRecurring,
+      recurrenceFrequency: values.isRecurring ? (values.recurrenceFrequency ?? null) : null,
     };
 
     if (mode === "create") {
@@ -441,6 +450,67 @@ export default function ItemFormPage({
                 )}
               />
             </div>
+          </div>
+
+          <div className="space-y-4 p-6 bg-card border border-border rounded-xl">
+            <h2 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide flex items-center gap-2">
+              <RefreshCw className="h-3.5 w-3.5" />
+              Recurring
+            </h2>
+            <FormField
+              control={form.control}
+              name="isRecurring"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="flex items-center justify-between gap-4">
+                    <div>
+                      <FormLabel>Repeats automatically</FormLabel>
+                      <FormDescription className="text-xs mt-0.5">
+                        When you mark this as renewed, the next instance will be created automatically with the dates advanced.
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        data-testid="switch-is-recurring"
+                      />
+                    </FormControl>
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {form.watch("isRecurring") && (
+              <FormField
+                control={form.control}
+                name="recurrenceFrequency"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      How often does it recur? <span className="text-destructive" aria-label="required">*</span>
+                    </FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value ?? ""}>
+                      <FormControl>
+                        <SelectTrigger data-testid="select-recurrence-frequency">
+                          <SelectValue placeholder="Choose recurrence" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="weekly">Weekly</SelectItem>
+                        <SelectItem value="monthly">Monthly</SelectItem>
+                        <SelectItem value="quarterly">Every 3 months</SelectItem>
+                        <SelectItem value="annually">Annually</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormDescription className="text-xs">
+                      The due date, renewal date, and reminder date will all be advanced by this interval when you mark the item as renewed.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
           </div>
 
           <div className="space-y-4 p-6 bg-card border border-border rounded-xl">

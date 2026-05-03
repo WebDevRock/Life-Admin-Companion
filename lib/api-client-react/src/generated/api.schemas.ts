@@ -87,6 +87,20 @@ export const LifeAdminItemPriority = {
   high: "high",
 } as const;
 
+/**
+ * @nullable
+ */
+export type LifeAdminItemRecurrenceFrequency =
+  | (typeof LifeAdminItemRecurrenceFrequency)[keyof typeof LifeAdminItemRecurrenceFrequency]
+  | null;
+
+export const LifeAdminItemRecurrenceFrequency = {
+  weekly: "weekly",
+  monthly: "monthly",
+  quarterly: "quarterly",
+  annually: "annually",
+} as const;
+
 export interface LifeAdminItem {
   id: number;
   userId: string;
@@ -111,6 +125,9 @@ export interface LifeAdminItem {
   /** @nullable */
   usefulLink?: string | null;
   priority: LifeAdminItemPriority;
+  isRecurring: boolean;
+  /** @nullable */
+  recurrenceFrequency?: LifeAdminItemRecurrenceFrequency;
   createdAt: string;
   updatedAt: string;
 }
@@ -147,6 +164,20 @@ export const CreateItemBodyPriority = {
   high: "high",
 } as const;
 
+/**
+ * @nullable
+ */
+export type CreateItemBodyRecurrenceFrequency =
+  | (typeof CreateItemBodyRecurrenceFrequency)[keyof typeof CreateItemBodyRecurrenceFrequency]
+  | null;
+
+export const CreateItemBodyRecurrenceFrequency = {
+  weekly: "weekly",
+  monthly: "monthly",
+  quarterly: "quarterly",
+  annually: "annually",
+} as const;
+
 export interface CreateItemBody {
   /** @minLength 1 */
   title: string;
@@ -170,6 +201,9 @@ export interface CreateItemBody {
   /** @nullable */
   usefulLink?: string | null;
   priority: CreateItemBodyPriority;
+  isRecurring?: boolean;
+  /** @nullable */
+  recurrenceFrequency?: CreateItemBodyRecurrenceFrequency;
 }
 
 export type UpdateItemBodyStatus =
@@ -204,6 +238,20 @@ export const UpdateItemBodyPriority = {
   high: "high",
 } as const;
 
+/**
+ * @nullable
+ */
+export type UpdateItemBodyRecurrenceFrequency =
+  | (typeof UpdateItemBodyRecurrenceFrequency)[keyof typeof UpdateItemBodyRecurrenceFrequency]
+  | null;
+
+export const UpdateItemBodyRecurrenceFrequency = {
+  weekly: "weekly",
+  monthly: "monthly",
+  quarterly: "quarterly",
+  annually: "annually",
+} as const;
+
 export interface UpdateItemBody {
   /** @minLength 1 */
   title?: string;
@@ -227,6 +275,9 @@ export interface UpdateItemBody {
   /** @nullable */
   usefulLink?: string | null;
   priority?: UpdateItemBodyPriority;
+  isRecurring?: boolean;
+  /** @nullable */
+  recurrenceFrequency?: UpdateItemBodyRecurrenceFrequency;
 }
 
 export type DashboardSummaryByCategoryItem = {

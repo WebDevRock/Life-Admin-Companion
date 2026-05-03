@@ -16,7 +16,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Pencil, Archive, Trash2, ArrowLeft, ExternalLink, TriangleAlert, Clock } from "lucide-react";
+import { Pencil, Archive, Trash2, ArrowLeft, ExternalLink, TriangleAlert, Clock, RefreshCw } from "lucide-react";
 import { format, isPast, isWithinInterval, addDays, parseISO } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 
@@ -129,6 +129,12 @@ export default function ItemDetailPage({ params }: { params: { id: string } }) {
             <Badge variant={item.priority === "high" ? "default" : "outline"} className="capitalize">
               {item.priority} priority
             </Badge>
+            {item.isRecurring && item.recurrenceFrequency && (
+              <span className="inline-flex items-center gap-1 text-xs font-medium text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+                <RefreshCw className="h-3 w-3" aria-hidden />
+                Repeats {item.recurrenceFrequency}
+              </span>
+            )}
           </div>
         </div>
         <div className="flex gap-2">
@@ -201,6 +207,21 @@ export default function ItemDetailPage({ params }: { params: { id: string } }) {
           </CardContent>
         </Card>
       </div>
+
+      {item.isRecurring && (
+        <Card className="border-primary/20 bg-primary/5">
+          <CardContent className="p-4 flex items-start gap-3">
+            <RefreshCw className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+            <div className="text-sm">
+              <p className="font-medium text-foreground">Recurring item</p>
+              <p className="text-muted-foreground mt-0.5">
+                When you mark this as <strong>renewed</strong>, a new active instance will be created automatically
+                {item.recurrenceFrequency ? ` with dates advanced by one ${item.recurrenceFrequency === "quarterly" ? "quarter" : item.recurrenceFrequency.replace("annually", "year").replace("monthly", "month").replace("weekly", "week")}` : ""}.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {(item.notes || item.usefulLink) && (
         <Card>

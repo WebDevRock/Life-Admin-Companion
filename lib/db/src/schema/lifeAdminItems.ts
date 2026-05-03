@@ -3,6 +3,7 @@ import {
   serial,
   text,
   integer,
+  boolean,
   timestamp,
   date,
   numeric,
@@ -34,6 +35,13 @@ export const priorityEnum = pgEnum("priority_level", [
   "high",
 ]);
 
+export const recurrenceFrequencyEnum = pgEnum("recurrence_frequency", [
+  "weekly",
+  "monthly",
+  "quarterly",
+  "annually",
+]);
+
 export const lifeAdminItemsTable = pgTable("life_admin_items", {
   id: serial("id").primaryKey(),
   userId: text("user_id").notNull(),
@@ -50,6 +58,8 @@ export const lifeAdminItemsTable = pgTable("life_admin_items", {
   notes: text("notes"),
   usefulLink: text("useful_link"),
   priority: priorityEnum("priority").notNull().default("normal"),
+  isRecurring: boolean("is_recurring").notNull().default(false),
+  recurrenceFrequency: recurrenceFrequencyEnum("recurrence_frequency"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
