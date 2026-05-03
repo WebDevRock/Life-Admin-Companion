@@ -30,25 +30,40 @@ async function upsertUser(uid: string, email: string | null, displayName: string
   const firstName = nameParts[0] ?? null;
   const lastName = nameParts.length > 1 ? nameParts.slice(1).join(" ") : null;
 
-  const userData = {
-    id: uid,
+  const updatePayload = {
     email: email ?? null,
     firstName,
     lastName,
     profileImageUrl: photoURL ?? null,
+    updatedAt: new Date(),
   };
 
-  const existing = await db.select().from(usersTable).where(eq(usersTable.id, uid));
-  if (existing.length > 0) {
+  // 1. Look up by Firebase UID (the normal path)
+  const [byUid] = await db.select().from(usersTable).where(eq(usersTable.id, uid));
+  if (byUid) {
     const [user] = await db
       .update(usersTable)
-      .set({ ...userData, updatedAt: new Date() })
+      .set(updatePayload)
       .where(eq(usersTable.id, uid))
       .returning();
     return user;
   }
 
-  const [user] = await db.insert(usersTable).values(userData).returning();
+  // 2. Look up by email — handles migrating old records (e.g. previous auth provider)
+  if (email) {
+    const [byEmail] = await db.select().from(usersTable).where(eq(usersTable.email, email));
+    if (byEmail) {
+      const [user] = await db
+        .update(usersTable)
+        .set({ id: uid, ...updatePayload })
+        .where(eq(usersTable.email, email))
+        .returning();
+      return user;
+    }
+  }
+
+  // 3. New user — insert fresh
+  const [user] = await db.insert(usersTable).values({ id: uid, ...updatePayload, email: email ?? null }).returning();
   return user;
 }
 
