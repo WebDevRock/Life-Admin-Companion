@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { useGetItem, useDeleteItem, useUpdateItem } from "@workspace/api-client-react";
+import { useGetItem, useDeleteItem, useUpdateItem, useCreateItem } from "@workspace/api-client-react";
 import { getGetItemQueryKey, getListItemsQueryKey, getGetDashboardSummaryQueryKey } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -16,7 +16,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Pencil, Archive, Trash2, ArrowLeft, ExternalLink, TriangleAlert, Clock, RefreshCw } from "lucide-react";
+import { Pencil, Archive, Trash2, ArrowLeft, ExternalLink, TriangleAlert, Clock, RefreshCw, Copy } from "lucide-react";
 import { format, isPast, isWithinInterval, addDays, parseISO } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 
@@ -42,6 +42,42 @@ export default function ItemDetailPage({ params }: { params: { id: string } }) {
 
   const archiveMutation = useUpdateItem();
   const deleteMutation = useDeleteItem();
+  const duplicateMutation = useCreateItem();
+
+  function handleDuplicate() {
+    if (!item) return;
+    duplicateMutation.mutate(
+      {
+        data: {
+          title: `Copy of ${item.title}`,
+          category: item.category as Parameters<typeof duplicateMutation.mutate>[0]["data"]["category"],
+          status: "active",
+          priority: (item.priority ?? "medium") as Parameters<typeof duplicateMutation.mutate>[0]["data"]["priority"],
+          provider: item.provider ?? undefined,
+          referenceNumber: item.referenceNumber ?? undefined,
+          dueDate: item.dueDate ?? undefined,
+          renewalDate: item.renewalDate ?? undefined,
+          reminderDate: item.reminderDate ?? undefined,
+          costAmount: item.costAmount ?? undefined,
+          costFrequency: (item.costFrequency ?? undefined) as Parameters<typeof duplicateMutation.mutate>[0]["data"]["costFrequency"],
+          notes: item.notes ?? undefined,
+          usefulLink: item.usefulLink ?? undefined,
+          isRecurring: item.isRecurring ?? false,
+          recurrenceFrequency: (item.recurrenceFrequency ?? undefined) as Parameters<typeof duplicateMutation.mutate>[0]["data"]["recurrenceFrequency"],
+        },
+      },
+      {
+        onSuccess: (created) => {
+          queryClient.invalidateQueries({ queryKey: getListItemsQueryKey({}) });
+          toast({ title: "Item duplicated", description: `"${created.title}" created.` });
+          setLocation(`/items/${created.id}`);
+        },
+        onError: () => {
+          toast({ title: "Failed to duplicate item", variant: "destructive" });
+        },
+      }
+    );
+  }
 
   function handleArchive() {
     archiveMutation.mutate(
@@ -137,12 +173,22 @@ export default function ItemDetailPage({ params }: { params: { id: string } }) {
             )}
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           <Button asChild variant="outline" size="sm" data-testid="btn-edit-item">
             <Link href={`/items/${item.id}/edit`}>
               <Pencil className="h-4 w-4 mr-2" />
               Edit
             </Link>
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleDuplicate}
+            disabled={duplicateMutation.isPending}
+            data-testid="btn-duplicate-item"
+          >
+            <Copy className="h-4 w-4 mr-2" />
+            {duplicateMutation.isPending ? "Duplicating…" : "Duplicate"}
           </Button>
           <Button variant="outline" size="sm" onClick={handleArchive} data-testid="btn-archive-item">
             <Archive className="h-4 w-4 mr-2" />

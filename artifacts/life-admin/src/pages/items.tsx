@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "wouter";
-import { useListItems } from "@workspace/api-client-react";
+import { useListItems, useCreateItem } from "@workspace/api-client-react";
 import { getListItemsQueryKey } from "@workspace/api-client-react";
 import { useDeleteItem, useUpdateItem } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -37,6 +37,7 @@ import {
   Eye,
   TriangleAlert,
   RefreshCw,
+  Copy,
 } from "lucide-react";
 import { format, isPast, isWithinInterval, addDays, parseISO } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
@@ -89,6 +90,7 @@ export default function ItemsPage() {
 
   const archiveMutation = useUpdateItem();
   const deleteMutation = useDeleteItem();
+  const duplicateMutation = useCreateItem();
 
   const items = data?.items ?? [];
 
@@ -111,6 +113,39 @@ export default function ItemsPage() {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getListItemsQueryKey({}) });
           toast({ title: "Item deleted" });
+        },
+      }
+    );
+  }
+
+  function handleDuplicate(item: (typeof items)[number]) {
+    duplicateMutation.mutate(
+      {
+        data: {
+          title: `Copy of ${item.title}`,
+          category: item.category as Parameters<typeof duplicateMutation.mutate>[0]["data"]["category"],
+          status: "active",
+          priority: (item.priority ?? "medium") as Parameters<typeof duplicateMutation.mutate>[0]["data"]["priority"],
+          provider: item.provider ?? undefined,
+          referenceNumber: item.referenceNumber ?? undefined,
+          dueDate: item.dueDate ?? undefined,
+          renewalDate: item.renewalDate ?? undefined,
+          reminderDate: item.reminderDate ?? undefined,
+          costAmount: item.costAmount ?? undefined,
+          costFrequency: (item.costFrequency ?? undefined) as Parameters<typeof duplicateMutation.mutate>[0]["data"]["costFrequency"],
+          notes: item.notes ?? undefined,
+          usefulLink: item.usefulLink ?? undefined,
+          isRecurring: item.isRecurring ?? false,
+          recurrenceFrequency: (item.recurrenceFrequency ?? undefined) as Parameters<typeof duplicateMutation.mutate>[0]["data"]["recurrenceFrequency"],
+        },
+      },
+      {
+        onSuccess: (created) => {
+          queryClient.invalidateQueries({ queryKey: getListItemsQueryKey({}) });
+          toast({ title: "Item duplicated", description: `"${created.title}" created.` });
+        },
+        onError: () => {
+          toast({ title: "Failed to duplicate", variant: "destructive" });
         },
       }
     );
@@ -264,6 +299,16 @@ export default function ItemsPage() {
                       <Link href={`/items/${item.id}/edit`}>
                         <Pencil className="h-4 w-4" />
                       </Link>
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      aria-label="Duplicate item"
+                      onClick={() => handleDuplicate(item)}
+                      disabled={duplicateMutation.isPending}
+                      data-testid={`btn-duplicate-${item.id}`}
+                    >
+                      <Copy className="h-4 w-4" />
                     </Button>
                     <Button
                       variant="ghost"
