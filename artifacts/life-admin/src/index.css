@@ -73,60 +73,62 @@
   --elevate-1: rgba(0,0,0, .03);
   --elevate-2: rgba(0,0,0, .08);
 
-  --background: 40 33% 98%;
-  --foreground: 20 14% 20%;
-  --border: 35 15% 85%;
-  
-  --card: 0 0% 100%;
-  --card-foreground: 20 14% 20%;
-  --card-border: 35 15% 85%;
+  /* Garden Morning palette */
+  --background: 37 40% 94%;       /* warm cream #f5f0e8 */
+  --foreground: 34 6% 27%;        /* dark warm brown #4a4641 */
+  --border: 100 12% 78%;          /* soft green-tinted border */
 
-  --sidebar: 35 30% 95%;
-  --sidebar-foreground: 20 14% 20%;
-  --sidebar-border: 35 15% 85%;
-  --sidebar-primary: 25 25% 45%;
-  --sidebar-primary-foreground: 40 33% 98%;
-  --sidebar-accent: 35 25% 90%;
-  --sidebar-accent-foreground: 20 14% 20%;
-  --sidebar-ring: 25 25% 45%;
+  --card: 37 30% 99%;             /* near-white warm card surface */
+  --card-foreground: 34 6% 27%;
+  --card-border: 100 12% 78%;
 
-  --popover: 0 0% 100%;
-  --popover-foreground: 20 14% 20%;
-  --popover-border: 35 15% 85%;
+  --sidebar: 37 32% 90%;
+  --sidebar-foreground: 34 6% 27%;
+  --sidebar-border: 100 12% 78%;
+  --sidebar-primary: 103 20% 52%; /* sage green */
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 37 28% 86%;
+  --sidebar-accent-foreground: 34 6% 27%;
+  --sidebar-ring: 103 20% 52%;
 
-  --primary: 25 25% 45%;
-  --primary-foreground: 40 33% 98%;
-  
-  --secondary: 150 20% 50%;
-  --secondary-foreground: 40 33% 98%;
+  --popover: 37 30% 99%;
+  --popover-foreground: 34 6% 27%;
+  --popover-border: 100 12% 78%;
 
-  --muted: 35 20% 92%;
-  --muted-foreground: 25 15% 45%;
+  --primary: 103 20% 52%;         /* sage green #7c9e6e */
+  --primary-foreground: 0 0% 100%;
 
-  --accent: 35 20% 92%;
-  --accent-foreground: 20 14% 20%;
+  --secondary: 110 31% 22%;       /* forest green #2d4a27 */
+  --secondary-foreground: 0 0% 100%;
+
+  --muted: 37 25% 88%;            /* slightly deeper cream */
+  --muted-foreground: 103 8% 42%; /* warm green-grey */
+
+  --accent: 37 25% 88%;
+  --accent-foreground: 34 6% 27%;
 
   --destructive: 0 50% 55%;
-  --destructive-foreground: 40 33% 98%;
+  --destructive-foreground: 0 0% 100%;
 
-  --input: 35 15% 85%;
-  --ring: 25 25% 45%;
+  --input: 100 12% 78%;
+  --ring: 103 20% 52%;
 
-  --chart-1: 25 25% 45%;
-  --chart-2: 150 20% 50%;
-  --chart-3: 40 30% 65%;
-  --chart-4: 210 20% 55%;
-  --chart-5: 0 30% 60%;
+  /* Garden Morning chart colours */
+  --chart-1: 103 20% 52%;         /* sage green */
+  --chart-2: 110 31% 22%;         /* forest green */
+  --chart-3: 34 38% 60%;          /* warm sand */
+  --chart-4: 18 48% 52%;          /* terracotta */
+  --chart-5: 0 30% 58%;           /* soft red */
 
   --app-font-sans: 'Inter', sans-serif;
-  --app-font-serif: Georgia, serif;
+  --app-font-serif: 'Lora', Georgia, serif;
   --app-font-mono: Menlo, monospace;
   --radius: .5rem;
-  
+
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.08), 0 1px 2px -1px rgb(0 0 0 / 0.08);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.08);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.08);
 
   --sidebar-primary-border: hsl(var(--sidebar-primary));
   --sidebar-accent-border: hsl(var(--sidebar-accent));
@@ -144,50 +146,51 @@
   --elevate-1: rgba(255,255,255, .04);
   --elevate-2: rgba(255,255,255, .09);
 
-  --background: 20 15% 15%;
-  --foreground: 40 25% 95%;
-  --border: 20 15% 25%;
-  
-  --card: 20 15% 18%;
-  --card-foreground: 40 25% 95%;
-  --card-border: 20 15% 25%;
+  /* Dark mode — forest-night feel */
+  --background: 114 15% 12%;
+  --foreground: 37 30% 92%;
+  --border: 110 12% 22%;
 
-  --sidebar: 20 15% 18%;
-  --sidebar-foreground: 40 25% 95%;
-  --sidebar-border: 20 15% 25%;
-  --sidebar-primary: 25 35% 65%;
-  --sidebar-primary-foreground: 20 15% 15%;
-  --sidebar-accent: 20 15% 25%;
-  --sidebar-accent-foreground: 40 25% 95%;
-  --sidebar-ring: 25 35% 65%;
+  --card: 114 15% 15%;
+  --card-foreground: 37 30% 92%;
+  --card-border: 110 12% 22%;
 
-  --popover: 20 15% 18%;
-  --popover-foreground: 40 25% 95%;
-  --popover-border: 20 15% 25%;
+  --sidebar: 114 15% 15%;
+  --sidebar-foreground: 37 30% 92%;
+  --sidebar-border: 110 12% 22%;
+  --sidebar-primary: 103 20% 62%;
+  --sidebar-primary-foreground: 114 15% 12%;
+  --sidebar-accent: 110 12% 22%;
+  --sidebar-accent-foreground: 37 30% 92%;
+  --sidebar-ring: 103 20% 62%;
 
-  --primary: 25 35% 65%;
-  --primary-foreground: 20 15% 15%;
-  
-  --secondary: 150 25% 60%;
-  --secondary-foreground: 20 15% 15%;
+  --popover: 114 15% 15%;
+  --popover-foreground: 37 30% 92%;
+  --popover-border: 110 12% 22%;
 
-  --muted: 20 15% 25%;
-  --muted-foreground: 30 15% 70%;
+  --primary: 103 20% 62%;         /* lighter sage in dark */
+  --primary-foreground: 114 15% 12%;
 
-  --accent: 20 15% 25%;
-  --accent-foreground: 40 25% 95%;
+  --secondary: 110 20% 45%;
+  --secondary-foreground: 114 15% 12%;
+
+  --muted: 110 12% 22%;
+  --muted-foreground: 37 20% 65%;
+
+  --accent: 110 12% 22%;
+  --accent-foreground: 37 30% 92%;
 
   --destructive: 0 45% 50%;
-  --destructive-foreground: 40 25% 95%;
+  --destructive-foreground: 37 30% 92%;
 
-  --input: 20 15% 25%;
-  --ring: 25 35% 65%;
+  --input: 110 12% 22%;
+  --ring: 103 20% 62%;
 
-  --chart-1: 25 35% 65%;
-  --chart-2: 150 25% 60%;
-  --chart-3: 40 35% 75%;
-  --chart-4: 210 25% 65%;
-  --chart-5: 0 35% 60%;
+  --chart-1: 103 20% 62%;
+  --chart-2: 110 20% 45%;
+  --chart-3: 37 35% 72%;
+  --chart-4: 18 45% 60%;
+  --chart-5: 0 35% 58%;
 }
 
 @layer base {
