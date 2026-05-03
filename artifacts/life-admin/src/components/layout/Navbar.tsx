@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@workspace/replit-auth-web";
-import { LogIn, LogOut, CheckSquare, Settings, Archive } from "lucide-react";
+import { LogIn, LogOut, CheckSquare, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function Navbar() {
@@ -24,6 +24,9 @@ export function Navbar() {
                 </Link>
                 <Link href="/items" className={location === "/items" ? "text-primary" : "text-muted-foreground hover:text-foreground transition-colors"}>
                   Items
+                </Link>
+                <Link href="/costs" className={location === "/costs" ? "text-primary" : "text-muted-foreground hover:text-foreground transition-colors"}>
+                  Costs
                 </Link>
                 <Link href="/archived" className={location === "/archived" ? "text-primary" : "text-muted-foreground hover:text-foreground transition-colors"}>
                   Archived
