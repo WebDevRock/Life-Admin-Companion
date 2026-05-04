@@ -30,8 +30,42 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ArrowLeft, Loader2, RefreshCw } from "lucide-react";
+import { ArrowLeft, Loader2, RefreshCw, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+
+function DateInput({
+  value,
+  onChange,
+  testId,
+}: {
+  value: string | null | undefined;
+  onChange: (val: string | null) => void;
+  testId?: string;
+}) {
+  return (
+    <div className="flex items-center gap-1">
+      <input
+        type="date"
+        value={value ?? ""}
+        onChange={(e) => onChange(e.target.value || null)}
+        data-testid={testId}
+        className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 min-w-0"
+      />
+      {value ? (
+        <button
+          type="button"
+          onClick={() => onChange(null)}
+          aria-label="Clear date"
+          className="shrink-0 flex items-center justify-center h-9 w-9 rounded-md border border-input bg-transparent text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+        >
+          <X className="h-3.5 w-3.5" />
+        </button>
+      ) : (
+        <div className="shrink-0 w-9" />
+      )}
+    </div>
+  );
+}
 
 const CATEGORIES = [
   "Bills",
@@ -360,7 +394,7 @@ export default function ItemFormPage({
                   <FormItem>
                     <FormLabel>Due date</FormLabel>
                     <FormControl>
-                      <Input type="date" {...field} value={field.value ?? ""} data-testid="input-due-date" />
+                      <DateInput value={field.value} onChange={field.onChange} testId="input-due-date" />
                     </FormControl>
                     <FormDescription className="text-xs">When does this need to be done?</FormDescription>
                     <FormMessage />
@@ -374,7 +408,7 @@ export default function ItemFormPage({
                   <FormItem>
                     <FormLabel>Renewal date</FormLabel>
                     <FormControl>
-                      <Input type="date" {...field} value={field.value ?? ""} data-testid="input-renewal-date" />
+                      <DateInput value={field.value} onChange={field.onChange} testId="input-renewal-date" />
                     </FormControl>
                     <FormDescription className="text-xs">When does it renew?</FormDescription>
                     <FormMessage />
@@ -388,7 +422,7 @@ export default function ItemFormPage({
                   <FormItem>
                     <FormLabel>Reminder date</FormLabel>
                     <FormControl>
-                      <Input type="date" {...field} value={field.value ?? ""} data-testid="input-reminder-date" />
+                      <DateInput value={field.value} onChange={field.onChange} testId="input-reminder-date" />
                     </FormControl>
                     <FormDescription className="text-xs">When should you be reminded?</FormDescription>
                     <FormMessage />
